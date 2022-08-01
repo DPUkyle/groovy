@@ -93,7 +93,7 @@ final class MultipleAssignmentTest {
     }
 
     @Test
-    void testChainedMultiAssignment() {
+    void testMultiAssignChain() {
         assertScript '''
             def a, b, c, d
 

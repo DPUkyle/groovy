@@ -20,10 +20,10 @@ package gls.syntax
 
 import groovy.test.GroovyTestCase
 
-import static Container.*
-import static Ingredient.*
-import static CookingAction.*
-import static Temperature.*
+import static gls.syntax.Container.*
+import static gls.syntax.CookingAction.*
+import static gls.syntax.Ingredient.*
+import static gls.syntax.Temperature.*
 
 /**
  * Test case for "extended command expressions" (GEP-3) added in Groovy 1.8
@@ -72,7 +72,7 @@ class Gep3Test extends GroovyTestCase {
         Integer.metaClass = null
     }
 
-    static String txt = "Lidia is Groovy ;)"
+    static String txt = 'Lidia is Groovy ;)'
 
     void testSimpleClassicalCommandExpressions() {
         foo txt
@@ -87,17 +87,17 @@ class Gep3Test extends GroovyTestCase {
     static a2(Closure c) { return txt }
 
     void testNewSyntax() {
-        def expectedResult = "from:Lidia;to:Guillaume;body:how are you?;"
+        def expectedResult = 'from:Lidia;to:Guillaume;body:how are you?;'
         def e = new Email()
-        e.from "Lidia" to "Guillaume" body "how are you?"
+        e.from 'Lidia' to 'Guillaume' body 'how are you?'
         def result = e.send()
 
         assert expectedResult == result
     }
 
     void testContactInfo() {
-        def contact = [name: { String name -> assert name == "Guillaume"; [age: { int age -> assert age == 33 }]}]
-        contact.name "Guillaume" age 33
+        def contact = [name: { String name -> assert name == 'Guillaume'; [age: { int age -> assert age == 33 }]}]
+        contact.name 'Guillaume' age 33
     }
 
     void testArtistPaintingWithAMixOfNamedAndNonNamedParams() {
@@ -105,15 +105,15 @@ class Gep3Test extends GroovyTestCase {
 
         def artist = [
             paint: { String what ->
-                assert what == "wall"
+                assert what == 'wall'
                 [
                     with: { Map m, String c1, String c2 ->
-                        assert m.and == "Blue"
-                        assert c1 == "Red"
-                        assert c2 == "Green"
+                        assert m.and == 'Blue'
+                        assert c1 == 'Red'
+                        assert c2 == 'Green'
                         [
                             at: { String time ->
-                                assert time == "3 PM"
+                                assert time == '3 PM'
                             }
                         ]
                     }
@@ -121,12 +121,12 @@ class Gep3Test extends GroovyTestCase {
             }
         ]
 
-        artist.paint "wall" with "Red", "Green", and: "Blue" at 3.pm
+        artist.paint 'wall' with 'Red', 'Green', and: 'Blue' at 3.pm
     }
 
     void testArgWith() {
-        def arr = ["he", "ll", "o"]
-        def concat = { String s1 -> [with: { String s2 -> [and: { String s3 -> assert s1+s2+s3 == "hello"}]}]}
+        def arr = ['he', 'll', 'o']
+        def concat = { String s1 -> [with: { String s2 -> [and: { String s3 -> assert s1+s2+s3 == 'hello'}]}]}
 
         concat arr[0] with arr[1] and arr[2]
     }
@@ -140,18 +140,18 @@ class Gep3Test extends GroovyTestCase {
     static execute(Closure c) { c }
 
 
-    static String message = ""
+    static String message = ''
     static drugQuantity, drug
 
     void testMedicine() {
-        Number.metaClass.getPills = { -> new DrugQuantity(q: delegate, form: "pills") }
-        Number.metaClass.getHours = { -> new Duration(q: delegate, unit: "hours") }
+        Number.metaClass.getPills = { -> new DrugQuantity(q: delegate, form: 'pills') }
+        Number.metaClass.getHours = { -> new Duration(q: delegate, unit: 'hours') }
 
-        def chloroquinine = new Drug(name: "Chloroquinine")
+        def chloroquinine = new Drug(name: 'Chloroquinine')
 
         take 3.pills of chloroquinine after 6.hours
 
-        assert message == "Take 3 pills of Chloroquinine after 6 hours"
+        assert message == 'Take 3 pills of Chloroquinine after 6 hours'
 
     }
 
@@ -160,7 +160,8 @@ class Gep3Test extends GroovyTestCase {
     def after(Duration dur) { message = "Take $drugQuantity of $drug after $dur" }
 
     void testRecipeDsl() {
-        def (once, twice) = [1, 2]
+        final once = 1
+        final twice = 2
 
         Integer.metaClass.getMinutes { delegate }
 
@@ -189,7 +190,7 @@ class Gep3Test extends GroovyTestCase {
 
     void testExtendedCommandExpressionsOnTheRHS() {
         def ( coffee,   sugar,   milk,   liquor ) =
-            ["coffee", "sugar", "milk", "liquor"]
+            ['coffee', 'sugar', 'milk', 'liquor']
         def drink = Drink.&drink
 
         def r1 = drink coffee
@@ -310,15 +311,15 @@ class Gep3Test extends GroovyTestCase {
     * Case where an Integer is used as name
     *
     * case            a b 1 2
-    * equivalent      a(b)."1"(2)
+    * equivalent      a(b).'1'(2)
     */
     void testIntegerAsName() {
-        Integer.metaClass."1" = {x-> assert delegate == 10; x}
-        def a = {x-> assert x == "b"; 10}
-        def b = "b"
+        Integer.metaClass.'1' = {x-> assert delegate == 10; x}
+        def a = {x-> assert x == 'b'; 10}
+        def b = 'b'
         def x = a b 1 2
         assert x == 2
-        assert a(b)."1"(2) == 2
+        assert a(b).'1'(2) == 2
     }
 
     void testMethodAndMethodCallTakingClosureArgument() {
@@ -348,7 +349,7 @@ class Gep3Test extends GroovyTestCase {
     // equivalent   task(copy(type:Copy,{10}))
     void testInnerMethodWithClosure() {
         // with simple expression
-        assertScript """
+        assertScript '''
             class Copy{}
             def task(x) {
                 assert x == 2
@@ -359,9 +360,9 @@ class Gep3Test extends GroovyTestCase {
                 2
             }
             task copy(type: Copy) { 10 }
-        """
+        '''
         // with nested gep3
-        assertScript """
+        assertScript '''
             class Copy{}
             def task(x) {
                 assert x == 2
@@ -373,8 +374,8 @@ class Gep3Test extends GroovyTestCase {
             }
             def a(x){this}
             def b(x){x*10}
-            task copy(type: Copy) { a 10 b 10 }        
-        """
+            task copy(type: Copy) { a 10 b 10 }
+        '''
     }
 
     void testGradleDSL() {
@@ -395,7 +396,7 @@ class Gep3Test extends GroovyTestCase {
             def constraints(Closure c) {
                 c.delegate = [authCode: { Map m -> println m }]
                 c.resolveStrategy = Closure.DELEGATE_FIRST
-                c() 
+                c()
             }
 
             def authCode(Map m) {
@@ -406,14 +407,14 @@ class Gep3Test extends GroovyTestCase {
 
             name xxx: "/c/$val"(controller: 'foo', action: 'bar') {
                 constraints {
-                    authCode blank: false 
+                    authCode blank: false
                 }
-            }        
+            }
         '''
     }
 
     void testUsageOfInnerClass() {
-        assertScript """
+        assertScript '''
             class Demo  {
                void doit() {
                    execute new Runnable(){
@@ -428,10 +429,11 @@ class Gep3Test extends GroovyTestCase {
                }
             }
             new Demo().doit()
-        """
+        '''
     }
 }
 
+//------------------------------------------------------------------------------
 
 class Drink {
     String beverage
@@ -507,20 +509,20 @@ class Duration {
 }
 
 class Email {
-    String msg = ""
+    String msg = ''
 
     def from(address) {
-        msg += "from:" + address + ";"
+        msg += 'from:' + address + ';'
         return this
     }
 
     def to(address) {
-        msg += "to:" + address + ";"
+        msg += 'to:' + address + ';'
         return this
     }
 
     def body(text) {
-        msg += "body:" + text + ";"
+        msg += 'body:' + text + ';'
         return this
     }
 
@@ -528,4 +530,3 @@ class Email {
         return msg
     }
 }
-
